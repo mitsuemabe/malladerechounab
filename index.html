@@ -11,8 +11,8 @@
       --lila-titulo: #9575CD;
       --cuadro-anual: #D1C4E9;
       --ramo-disponible: #B39DDB;
-      --ramo-aprobado: #C6E5B1;
-      --ramo-bloqueado: #FFBFB0;
+      --ramo-aprobado: #B1E3BF;
+      --ramo-bloqueado: #D49499;
     }
 
     body {
@@ -57,7 +57,7 @@
     .reiniciar-btn {
       margin-top: 1rem;
       display: inline-block;
-      background-color: var(--ramo-disponible);
+      background-color: var(--cuadro-anual);
       color: #222;
       padding: 0.7rem 1rem;
       border-radius: 12px;
@@ -171,7 +171,7 @@
     <div class="leyenda">
       En color lila verás las asignaturas que puedes actualmente inscribir, en rojo aquellas que no puedes cursar aún por faltar un prerrequisito y en verde aquellas que ya has aprobado.
     </div>
-    <div class="leyenda">
+    <div class="descripcion">
       *Si posicionas el cursor sobre una asignatura bloqueada por unos segundos, te mostrará qué asignaturas te faltan para poder cursarla*
     </div>
     <div class="avance-box" id="avanceGlobal">Avance: 0%</div>
