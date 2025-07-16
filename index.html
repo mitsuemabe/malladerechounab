@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Malla Interactiva: Derecho UNAB</title>
+  <style>
+    :root {
+      --fondo: #EDE7F6;
+      --texto: #222;
+      --lila-titulo: #9575CD;
+      --cuadro-anual: #D1C4E9;
+      --ramo-disponible: #B39DDB;
+      --ramo-aprobado: #C6E5B1;
+      --ramo-bloqueado: #FFBFB0;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--fondo);
+      color: var(--texto);
+    }
+
+    header {
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      color: var(--lila-titulo);
+      margin-bottom: 0.5rem;
+    }
+
+    .descripcion, .leyenda {
+      max-width: 700px;
+      margin: 0 auto 1rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .leyenda {
+      font-weight: bold;
+    }
+
+    .avance-box {
+      background-color: var(--cuadro-anual);
+      padding: 1rem;
+      border-radius: 12px;
+      display: inline-block;
+      font-weight: bold;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .reiniciar-btn {
+      margin-top: 1rem;
+      display: inline-block;
+      background-color: var(--ramo-disponible);
+      color: #222;
+      padding: 0.7rem 1rem;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: 2px dashed #9575CD;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    .reiniciar-btn:hover {
+      background-color: #a58bd2;
+      transform: scale(1.03);
+      color: white;
+    }
+
+    .container {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .anio {
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: var(--cuadro-anual);
+      padding: 0.75rem 1.5rem;
+      border-radius: 16px;
+      text-align: center;
+      width: fit-content;
+      margin: 0 auto 0.5rem;
+    }
+
+    .bloque-anual {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .semestre {
+      background-color: var(--cuadro-anual);
+      padding: 1rem;
+      border-radius: 16px;
+      flex: 1 1 300px;
+      min-width: 280px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    }
+
+    .semestre h2 {
+      text-align: center;
+      margin-top: 0;
+      font-size: 1.1rem;
+    }
+
+    .fila-ramos {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 1rem;
+    }
+
+    .ramo {
+      padding: 0.8rem;
+      border-radius: 12px;
+      background-color: var(--ramo-disponible);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      border: 2px dashed #9575CD;
+      font-size: 0.95rem;
+    }
+
+    .ramo:hover {
+      transform: scale(1.02);
+    }
+
+    .aprobado {
+      background-color: var(--ramo-aprobado) !important;
+      text-decoration: line-through;
+      border-style: solid;
+    }
+
+    .bloqueado {
+      background-color: var(--ramo-bloqueado) !important;
+      color: #555555aa;
+      border-style: dashed;
+      cursor: not-allowed;
+    }
+
+    .nota-final {
+      text-align: center;
+      font-size: 0.75rem;
+      margin: 4rem 1rem 2rem;
+      color: #444;
+    }
+
+    @media (max-width: 600px) {
+      .bloque-anual {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Malla Interactiva: Derecho UNAB</h1>
+    <div class="descripcion">
+      ¡Hola! Armé esta malla interactiva con la finalidad de que puedas visualizar tu avance curricular en base a los prerrequisitos que exige cada asignatura. Para ello, basta con que marques las asignaturas que has ido aprobando y automáticamente podrás ver cuáles otras puedes ir cursando. ¡Espero que esta herramienta sea de mucha ayuda, te deseo mucho éxito en la carrera!
+    </div>
+    <div class="leyenda">
+      En color lila verás las asignaturas que puedes actualmente inscribir, en rojo aquellas que no puedes cursar aún por faltar un prerrequisito y en verde aquellas que ya has aprobado.
+    </div>
+    <div class="leyenda">
+      *Si posicionas el cursor sobre una asignatura bloqueada por unos segundos, te mostrará qué asignaturas te faltan para poder cursarla*
+    </div>
+    <div class="avance-box" id="avanceGlobal">Avance: 0%</div>
+    <div class="reiniciar-btn" onclick="reiniciarAvance()">Reiniciar avance</div>
+  </header>
+
+  <div class="container">
+  <!-- PRIMER AÑO -->
+  <div class="anio">PRIMER AÑO</div>
+  <div class="bloque-anual">
+    <div class="semestre" data-semestre="1">
+      <h2>Primer Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+    <div class="semestre" data-semestre="2">
+      <h2>Segundo Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+  </div>
+
+  <!-- SEGUNDO AÑO -->
+  <div class="anio">SEGUNDO AÑO</div>
+  <div class="bloque-anual">
+    <div class="semestre" data-semestre="3">
+      <h2>Tercer Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+    <div class="semestre" data-semestre="4">
+      <h2>Cuarto Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+  </div>
+
+  <!-- TERCER AÑO -->
+  <div class="anio">TERCER AÑO</div>
+  <div class="bloque-anual">
+    <div class="semestre" data-semestre="5">
+      <h2>Quinto Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+    <div class="semestre" data-semestre="6">
+      <h2>Sexto Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+  </div>
+
+  <!-- CUARTO AÑO -->
+  <div class="anio">CUARTO AÑO</div>
+  <div class="bloque-anual">
+    <div class="semestre" data-semestre="7">
+      <h2>Séptimo Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+    <div class="semestre" data-semestre="8">
+      <h2>Octavo Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+  </div>
+
+  <!-- QUINTO AÑO -->
+  <div class="anio">QUINTO AÑO</div>
+  <div class="bloque-anual">
+    <div class="semestre" data-semestre="9">
+      <h2>Noveno Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+    <div class="semestre" data-semestre="10">
+      <h2>Décimo Semestre</h2>
+      <div class="fila-ramos"></div>
+    </div>
+  </div>
+</div>
+<script>
+  const ramos = [
+    { id: "intro", nombre: "Introducción al Derecho", semestre: 1 },
+    { id: "historia", nombre: "Historia del Derecho", semestre: 1 },
+    { id: "constitucional", nombre: "Instituciones Políticas y Derecho Constitucional Orgánico", semestre: 1 },
+    { id: "romano", nombre: "Derecho Romano", semestre: 1 },
+    { id: "habilidades", nombre: "Habilidades Comunicativas", semestre: 1 },
+    { id: "economia", nombre: "Nociones de Economía", semestre: 2 },
+    { id: "teoria", nombre: "Teoría de los Derechos y Acciones Constitucionales", semestre: 2 },
+    { id: "privado", nombre: "Fundamentos del Derecho Privado", semestre: 2 },
+    { id: "argumentacion", nombre: "Interpretación y Argumentación", semestre: 2 },
+    { id: "ingles1", nombre: "Inglés I", semestre: 2 },
+    { id: "fundamentales", nombre: "Derechos Fundamentales", semestre: 3, prerequisitos: ["teoria"] },
+    { id: "obligaciones", nombre: "Negocio Jurídico y Teoría General de las Obligaciones", semestre: 3, prerequisitos: ["privado"] },
+    { id: "procesal1", nombre: "Derecho Procesal Parte General", semestre: 3 },
+    { id: "critico", nombre: "Pensamiento Crítico", semestre: 3 },
+    { id: "ingles2", nombre: "Inglés II", semestre: 3, prerequisitos: ["ingles1"] },
+    { id: "comercial", nombre: "Fundamentos del Derecho Comercial y Títulos de Crédito", semestre: 4 },
+    { id: "internacional", nombre: "Derecho Internacional Público", semestre: 4, prerequisitos: ["constitucional"] },
+    { id: "bienes", nombre: "Derecho de los Bienes", semestre: 4, prerequisitos: ["obligaciones"] },
+    { id: "procesal2", nombre: "Normas Comunes a todo Procedimiento", semestre: 4, prerequisitos: ["procesal1"] },
+    { id: "ingles3", nombre: "Inglés III", semestre: 4, prerequisitos: ["ingles2"] },
+    { id: "penal1", nombre: "Principios del Derecho Penal y de la Pena", semestre: 5, prerequisitos: ["fundamentales"] },
+    { id: "adm1", nombre: "Derecho Administrativo I", semestre: 5, prerequisitos: ["constitucional"] },
+    { id: "incumplimiento", nombre: "Cumplimiento e Incumplimiento de las Obligaciones Contractuales", semestre: 5, prerequisitos: ["bienes"] },
+    { id: "declarativos", nombre: "Procedimientos Declarativos", semestre: 5, prerequisitos: ["procesal2"] },
+    { id: "seminario1", nombre: "Seminario de Investigación", semestre: 5, prerequisitos: ["intro", "historia", "romano", "economia", "argumentacion", "fundamentales", "comercial", "internacional", "bienes", "procesal2", "critico"] },
+    { id: "ingles4", nombre: "Inglés IV", semestre: 5, prerequisitos: ["ingles3"] },
+    { id: "societario", nombre: "Derecho Societario", semestre: 6 },
+    { id: "penal2", nombre: "Parte General del Derecho Penal", semestre: 6, prerequisitos: ["penal1"] },
+    { id: "adm2", nombre: "Derecho Administrativo II", semestre: 6, prerequisitos: ["adm1"] },
+    { id: "extracontractual", nombre: "Responsabilidad Extracontractual", semestre: 6, prerequisitos: ["incumplimiento"] },
+    { id: "laboral", nombre: "Derecho Laboral", semestre: 6 },
+    { id: "ejecucion", nombre: "Ejecución y Recursos", semestre: 6, prerequisitos: ["declarativos"] },
+    { id: "tributario", nombre: "Derecho Tributario", semestre: 7, prerequisitos: ["societario"] },
+    { id: "penal3", nombre: "Parte Especial del Derecho Penal", semestre: 7, prerequisitos: ["penal2"] },
+    { id: "contratos", nombre: "Contratos", semestre: 7, prerequisitos: ["incumplimiento"] },
+    { id: "asesoria", nombre: "Destrezas de Asesoría Legal", semestre: 7, prerequisitos: ["incumplimiento", "societario", "adm2"] },
+    { id: "procesalpenal", nombre: "Derecho Procesal Penal", semestre: 7, prerequisitos: ["penal2", "ejecucion"] },
+    { id: "tecnologia", nombre: "Derecho, Innovación y Tecnología", semestre: 7 },
+    { id: "litigacion", nombre: "Litigación Oral", semestre: 8, prerequisitos: ["asesoria", "procesalpenal"] },
+    { id: "etica", nombre: "Ética Profesional", semestre: 8 },
+    { id: "familia", nombre: "Derecho de Familia", semestre: 8, prerequisitos: ["contratos"] },
+    { id: "forense", nombre: "Redacción Forense", semestre: 8, prerequisitos: ["contratos", "ejecucion", "asesoria"] },
+    { id: "negociacion", nombre: "Negociación y Mediación", semestre: 8, prerequisitos: ["contratos", "asesoria"] },
+    { id: "seminario2", nombre: "Seminario de Doctrina y Jurisprudencia", semestre: 8, prerequisitos: ["habilidades", "ingles4", "seminario1", "penal3", "asesoria", "extracontractual", "laboral", "procesalpenal", "tributario", "contratos", "tecnologia"] },
+    { id: "electivo1", nombre: "Electivo I", semestre: 9, prerequisitos: ["forense", "negociacion"] },
+    { id: "seminario3", nombre: "Seminario de Investigación II", semestre: 9, prerequisitos: ["seminario2"] },
+    { id: "sucesorio", nombre: "Derecho Sucesorio", semestre: 9, prerequisitos: ["familia"] },
+    { id: "clinica1", nombre: "Consultorío Jurídico I", semestre: 9, prerequisitos: ["litigacion", "etica", "familia", "forense", "negociacion", "seminario2"] },
+    { id: "genero", nombre: "Derecho, Género e Inclusión", semestre: 9, prerequisitos: ["fundamentales", "penal3", "familia"] },
+    { id: "electivo2", nombre: "Electivo II", semestre: 10, prerequisitos: ["electivo1"] },
+    { id: "electivo3", nombre: "Electivo III", semestre: 10, prerequisitos: ["electivo1"] },
+    { id: "electivo4", nombre: "Electivo IV", semestre: 10, prerequisitos: ["electivo1"] },
+    { id: "clinica2", nombre: "Consultorío Jurídico II", semestre: 10, prerequisitos: ["sucesorio", "clinica1", "genero"] },
+    { id: "graduacion", nombre: "Actividad Final de Graduación", semestre: 10, prerequisitos: ["seminario2", "electivo1", "seminario3", "sucesorio", "clinica1", "genero"] }
+  ];
+
+  const aprobados = new Set(JSON.parse(localStorage.getItem("aprobados")) || []);
+
+  function renderMalla() {
+    document.querySelectorAll(".fila-ramos").forEach(c => c.innerHTML = "");
+    let completados = 0;
+    const total = ramos.length;
+
+    ramos.forEach(ramo => {
+      const div = document.createElement("div");
+      div.classList.add("ramo");
+      div.textContent = ramo.nombre;
+
+      const desbloqueado = !ramo.prerequisitos || ramo.prerequisitos.every(p => aprobados.has(p));
+
+      if (aprobados.has(ramo.id)) {
+        div.classList.add("aprobado");
+        completados++;
+      } else if (!desbloqueado) {
+        div.classList.add("bloqueado");
+        const faltan = ramo.prerequisitos.filter(p => !aprobados.has(p));
+        const nombres = ramos.filter(r => faltan.includes(r.id)).map(r => r.nombre);
+        div.title = `Para cursar esta asignatura necesitas aprobar:\n- ${nombres.join("\n- ")}`;
+      }
+
+      div.addEventListener("click", () => {
+        if (!div.classList.contains("bloqueado")) {
+          if (aprobados.has(ramo.id)) {
+            aprobados.delete(ramo.id);
+          } else {
+            aprobados.add(ramo.id);
+          }
+          localStorage.setItem("aprobados", JSON.stringify([...aprobados]));
+          renderMalla();
+        }
+      });
+
+      const contenedor = document.querySelector(`.semestre[data-semestre="${ramo.semestre}"] .fila-ramos`);
+      if (contenedor) {
+        contenedor.appendChild(div);
+      }
+    });
+
+    const porcentaje = Math.round((completados / total) * 100);
+    document.getElementById("avanceGlobal").textContent =
+      `Avance: ${completados} de ${total} ramos (${porcentaje}%)`;
+  }
+
+  function reiniciarAvance() {
+    if (confirm("¿Estás segura de que deseas reiniciar tu avance?")) {
+      localStorage.removeItem("aprobados");
+      renderMalla();
+    }
+  }
+
+  renderMalla();
+</script>
+
+<div class="nota-final">
+  *Insumo creado por Mitsue Sepúlveda Mabe, cualquier sugerencia, falla o mejora a la página por favor comunicar al IG @mitsusepulveda o al IG del Centro de Estudiantes @cederechounab.
+</div>
+</body>
+</html>
