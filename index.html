@@ -327,16 +327,24 @@
       }
 
       div.addEventListener("click", () => {
-        if (!div.classList.contains("bloqueado")) {
-          if (aprobados.has(ramo.id)) {
-            aprobados.delete(ramo.id);
-          } else {
-            aprobados.add(ramo.id);
-          }
-          localStorage.setItem("aprobados", JSON.stringify([...aprobados]));
-          renderMalla();
-        }
-      });
+  if (div.classList.contains("bloqueado")) {
+    // ✅ Mostrar alerta solo en pantallas táctiles
+    if (window.matchMedia("(hover: none)").matches) {
+      const faltan = ramo.prerequisitos.filter(p => !aprobados.has(p));
+      const nombres = ramos.filter(r => faltan.includes(r.id)).map(r => r.nombre);
+      alert(`Para cursar "${ramo.nombre}" necesitas aprobar:\n\n- ${nombres.join("\n- ")}`);
+    }
+  } else {
+    // ✅ Ramo clickeable normalmente
+    if (aprobados.has(ramo.id)) {
+      aprobados.delete(ramo.id);
+    } else {
+      aprobados.add(ramo.id);
+    }
+    localStorage.setItem("aprobados", JSON.stringify([...aprobados]));
+    renderMalla();
+  }
+});
 
       const contenedor = document.querySelector(`.semestre[data-semestre="${ramo.semestre}"] .fila-ramos`);
       if (contenedor) {
